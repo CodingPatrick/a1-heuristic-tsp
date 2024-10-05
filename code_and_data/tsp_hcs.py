@@ -74,7 +74,7 @@ def get_best_neighbor(neighbors, distance_matrix):
     return best_neighbor, best_route_length
 
 # Function to run the Hill Climbing Algorithm for the TSP
-def hill_climbing(city_list, distance_matrix, iterations=100):
+def hill_climbing(city_list, distance_matrix, iterations=500):
 
     best_solution = None
     best_route_lengths = []
