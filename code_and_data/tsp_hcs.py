@@ -38,7 +38,7 @@ def distance_matrix(coords_list):
             matrix[j][i] = distance 
     return matrix
 
-# Function to generate a random solutionfor the TSP
+# Function to generate a random solution for the TSP
 def random_solution(nodes_list):
     cities = list(range(1, len(nodes_list) + 1))
     random.shuffle(cities) 
@@ -73,17 +73,24 @@ def get_best_neighbor(neighbors, distance_matrix):
             best_neighbor = neighbor
     return best_neighbor, best_route_length
 
-# Function to run the Hill Climbing Algorithm for the TSP
-def hill_climbing(city_list, distance_matrix, iterations=500):
+# Function to run the Hill Climbing Algorithm with random restart for the TSP
+def hill_climbing(city_list, distance_matrix, iterations=1000, restart_threshold=10):
 
     best_solution = None
     best_route_lengths = []
     best_route_length = float('inf')
+    no_improvement_count = 0
     
     for _ in range(iterations):
         
-        current_solution = random_solution(city_list)
-        current_route_length = route_length(current_solution, distance_matrix)
+        if no_improvement_count >= restart_threshold:
+            # Random restart after the threshold
+            current_solution = random_solution(city_list)
+            current_route_length = route_length(current_solution, distance_matrix)
+            no_improvement_count = 0  # Reset the no improvement count after restart
+        else:
+            current_solution = random_solution(city_list)
+            current_route_length = route_length(current_solution, distance_matrix)
         
         neighbors = get_neighbors(current_solution)
         best_neighbor, best_neighbor_length = get_best_neighbor(neighbors, distance_matrix)
@@ -94,18 +101,21 @@ def hill_climbing(city_list, distance_matrix, iterations=500):
                 current_solution = best_neighbor
                 neighbors = get_neighbors(current_solution)
                 best_neighbor, best_neighbor_length = get_best_neighbor(neighbors, distance_matrix)
+                no_improvement_count = 0  # Reset the no improvement count
             else:
                 flag = False
+                no_improvement_count += 1  # Increment no improvement count
 
         if current_route_length < best_route_length:
             best_route_length = current_route_length
             best_solution = current_solution
 
         best_route_lengths.append(best_route_length)
+
     return best_solution, best_route_length, best_route_lengths
 
-# Main function to run the Hill Climbing Algorithm for the TSP
-def main ():
+# Main function to run the Hill Climbing Algorithm with random restart for the TSP
+def main():
 
     # Check if the user has provided the correct number of arguments
     if len(sys.argv) != 2:
@@ -120,9 +130,9 @@ def main ():
     coords_list = [city_list[city] for city in sorted(city_list)]
     dist_matrix  = distance_matrix(coords_list)
 
-    # Run the Hill Climbing Algorithm
+    # Run the Hill Climbing Algorithm with random restart
     best_solution, best_route_length, best_route_lengths = hill_climbing(city_list, dist_matrix)
-    print(best_route_length)
+    print(f"Best route length: {best_route_length}")
 
     # Write the solution to a csv file
     with open("solution.csv", mode='w', newline='') as file:
@@ -134,7 +144,7 @@ def main ():
     plt.plot(range(0, len(best_route_lengths)), best_route_lengths)
     plt.xlabel('Iteration')
     plt.ylabel('Best Route Length')
-    plt.title('Improvement of the Hill Climbing Algorithm after each Iteration for the TSP')
+    plt.title('Improvement of the Hill Climbing Algorithm with Random Restart after each Iteration for the TSP')
     plt.show()
 
 # Run the main function
