@@ -26,6 +26,8 @@ def read_tsp(x):
                 city_list[city_id] = (x, y)
     return city_list
 
+##########################################################################
+
 # Function to calculate the Euclidean distance between two points
 def euclidean_distance(n1, n2):
     return np.sqrt((n1[0] - n2[0])**2 + (n1[1] - n2[1])**2)
@@ -123,7 +125,7 @@ def hill_climbing(city_list, distance_matrix, iterations, restart_threshold=10):
 
 ##########################################################################
 
-# Function to perform Random Search for TSP
+# Function to run Random Search for TSP
 def random_search(city_list, distance_matrix, iterations):
     best_route_length = float('inf')
     best_route_lengths = []
